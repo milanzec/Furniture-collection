@@ -2,7 +2,7 @@
 
 const cartBtn = document.querySelector(".cart-btn");
 const closeCartBtn = document.querySelector(".close-cart");
-const clearCartBtn = document.querySelector(".close-cart");
+const clearCartBtn = document.querySelector(".clear-cart");
 const cartDOM = document.querySelector(".cart");
 const cartOverLay = document.querySelector(".cart-overlay");
 const cartItems = document.querySelector(".cart-items");
@@ -65,14 +65,17 @@ class UI {
   }
   getButtons() {
     const btns = [...document.querySelectorAll(".bag-btn")];
+    buttonDOM = btns;
     btns.forEach(btn => {
       let id = btn.dataset.id;
+      console.log(id);
       let inCart = cart.find(item => item.id === id);
       if (inCart) {
         btn.innerText = "In Cart";
         btn.disabled = true;
       }
       btn.addEventListener("click", event => {
+        console.log(event);
         event.target.innerText = "In Cart";
         event.target.disabled = true;
         // get product from products
@@ -80,6 +83,7 @@ class UI {
 
         // add product to cart
         cart = [...cart, cartItem];
+        console.log(cart);
         // save cart in local storage
         Storage.saveCart(cart);
         // set cart values

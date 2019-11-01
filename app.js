@@ -28,7 +28,6 @@ class Products {
         const image = item.fields.image.fields.file.url;
         return { title, price, id, image };
       });
-      console.log(products);
       return products;
     } catch (error) {
       console.log(error);
@@ -53,7 +52,7 @@ class UI {
             />
             <button class="bag-btn" data-id=${product.id}>
               <i class="fas fa-shopping-cart"></i>
-              Add To Bag
+              Add To Cart
             </button>
           </div>
           <h3>${product.title}</h3>
@@ -68,22 +67,18 @@ class UI {
     buttonDOM = btns;
     btns.forEach(btn => {
       let id = btn.dataset.id;
-      console.log(id);
       let inCart = cart.find(item => item.id === id);
       if (inCart) {
         btn.innerText = "In Cart";
         btn.disabled = true;
       }
       btn.addEventListener("click", event => {
-        console.log(event);
         event.target.innerText = "In Cart";
         event.target.disabled = true;
         // get product from products
         let cartItem = { ...Storage.getProductFromStrg(id), amount: 1 };
-
         // add product to cart
         cart = [...cart, cartItem];
-        console.log(cart);
         // save cart in local storage
         Storage.saveCart(cart);
         // set cart values
@@ -140,13 +135,23 @@ class UI {
     cartDOM.classList.remove("showCart");
   }
   cartLogic() {
+    //clear cart button
     clearCartBtn.addEventListener("click", () => {
       this.clearCart();
+    });
+    //cart funcionality
+    cartContent.addEventListener("click", event => {
+      let removeItem = event.target;
+      cartContent.removeChild(removeItem.parentElement.parentElement);
+      let id = removeItem.dataset.id;
+
+      this.removeItem(id);
     });
   }
   clearCart() {
     let cartItem = cart.map(item => item.id);
     cartItem.forEach(id => this.removeItem(id));
+    console.log(cartContent.children);
     while (cartContent.children.length > 0) {
       cartContent.removeChild(cartContent.children[0]);
     }
@@ -160,7 +165,7 @@ class UI {
     button.disabled = false;
     button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to cart`;
   }
-  getSingleButton() {
+  getSingleButton(id) {
     return buttonDOM.find(button => button.dataset.id === id);
   }
 }

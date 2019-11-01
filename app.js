@@ -141,13 +141,36 @@ class UI {
     });
     //cart funcionality
     cartContent.addEventListener("click", event => {
-      let removeItem = event.target;
-      cartContent.removeChild(removeItem.parentElement.parentElement);
-      let id = removeItem.dataset.id;
-
-      this.removeItem(id);
+      if (event.target.classList.contains("remove-item")) {
+        let removeItem = event.target;
+        cartContent.removeChild(removeItem.parentElement.parentElement);
+        let id = removeItem.dataset.id;
+        this.removeItem(id);
+      } else if (event.target.classList.contains("fa-chevron-up")) {
+        let addAmount = event.target;
+        let id = addAmount.dataset.id;
+        let tempItem = cart.find(item => item.id === id);
+        tempItem.amount++;
+        Storage.saveCart(cart);
+        this.setCartValues(cart);
+        addAmount.nextElementSibling.innerText = tempItem.amount;
+      } else if (event.target.classList.contains("fa-chevron-down")) {
+        let lowerAmount = event.target;
+        let id = lowerAmount.dataset.id;
+        let tempItem = cart.find(item => item.id === id);
+        tempItem.amount = tempItem.amount - 1;
+        if (tempItem.amount > 0) {
+          Storage.saveCart(cart);
+          this.setCartValues(cart);
+          lowerAmount.previousElementSibling.innerText = tempItem.amount;
+        } else {
+          cartContent.removeChild(lowerAmount.parentElement.parentElement);
+          this.removeItem(id);
+        }
+      }
     });
   }
+
   clearCart() {
     let cartItem = cart.map(item => item.id);
     cartItem.forEach(id => this.removeItem(id));
